@@ -30,10 +30,10 @@ local people = {
 	jolie =     newPerson("shades",    "arm_warmer", "arm_warmer", "oildrum",   "skirt",      "sneakers"  )
 }
 
--- Put goober first, the rest in alphabetical order.
+-- Put Goober first, the rest in alphabetical order.
 local pri_group = {"goober"}
 
--- Maintain the order or body parts used above.
+-- Maintain the order of body parts used above.
 local pri_individual = {"head", "l_arm", "r_arm", "torso", "legs", "feet"}
 
 local reg = {
