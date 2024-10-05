@@ -23,7 +23,7 @@ Uses code from [Serpent](https://github.com/pkulchenko/serpent).
 
 * Attached metatables are not saved, and serialization may be affected by metamethods
 
-* Can load Lua table constructors while disabling function calls, string methods, bytecode chunks, and any statements prior to `return {…`
+* Can load Lua table constructors while forbidding function calls, string methods, bytecode chunks, and any statements prior to `return {…`
 
 
 # Example
