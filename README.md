@@ -13,7 +13,7 @@ Uses code from [Serpent](https://github.com/pkulchenko/serpent).
 
 * Serializable values: `boolean`, `number`, `string` and `table`
 
-* Arbitrary top placement of *priority keys* in a table; all other keys are sorted in a specific order
+* Arbitrary top placement of *priority keys* in a table; all other keys are sorted in a predictable order
 
 * Configurable limits for the serializer: maximum nested tables. total bytes written
 
