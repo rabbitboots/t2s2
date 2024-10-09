@@ -1,7 +1,7 @@
 -- t2s2: A Lua table serializer.
 -- See README.md and LICENSE for more info.
 -- Uses code from Serpent by Paul Kulchenko: https://github.com/pkulchenko/serpent
--- Version: 1.0.1
+-- Version: 1.0.2
 
 
 --[[
