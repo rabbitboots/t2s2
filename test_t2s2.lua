@@ -193,6 +193,7 @@ self:registerJob("serialize()", function(self)
 
 		self:isType(t2, "table")
 
+		print(inspect(t2))
 		self:isEqual(t2.str, "string")
 		self:isEqual(t2.int, 100)
 		self:isEqual(t2.negative_int, -99)
@@ -525,6 +526,29 @@ self:registerJob("serialize()", function(self)
 		t2s2.setMissingPriorityFatal(true)
 		self:expectLuaError("setMissingPriorityFatal() on: raise an error", t2s2.serialize, t, r)
 
+		self:lf(4)
+	end
+	--]====]
+
+
+	-- [====[
+	do
+		_resetT2S2()
+		self:print(4, "[+] string character escapes")
+
+		local ss = ""
+		for i = 1, 127 do
+			ss = ss .. string.char(i)
+		end
+		local t = {ss}
+		local s = t2s2.serialize(t)
+
+		local comp = [=====[
+return {
+  "\001\002\003\004\005\006\a\b\t\n\v\f\r\014\015\016\017\018\019\020\021\022\023\024\025\026\027\028\029\030\031 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\127"
+}]=====]
+
+		self:isEqual(s, comp)
 		self:lf(4)
 	end
 	--]====]

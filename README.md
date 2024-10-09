@@ -1,4 +1,4 @@
-**Version:** 1.0.0
+**Version:** 1.0.1
 
 # T2S2
 
@@ -187,6 +187,27 @@ Loads a Lua string table constructor while temporarily disabling function calls,
 
 # Notes
 
+## Chunks that are too big
+
+T2S2 can serialize tables that are too big for Lua to read back:
+
+  * Too many nested tables will lead to an error message along the lines of `chunk has too many syntax levels` or `C stack overflow`.
+
+  * Lua 5.1 has a limit of about 262143 table constants in a function. (Error: `constant table overflow`.) This limit is greatly relaxed in Lua 5.2+ and LuaJIT; they can both read arrays with at least five million entries.
+
+
+## Formatting
+
+Numbers are serialized with `string.format("%.17g", n)`, so they could lose some precision if they are extremely large or have fractional parts.
+
+Arrays and hash tables get are formatted differently. When an array is associated with a priority list that has at least one entry, T2S2 will always treat it like a hash table, even if none of the priority keys are present in the array. If the associated priority list is empty, then it is disregarded.
+
+
+### Character Escapes
+
+The serializer escapes characters 0-31 and 127 in strings. The `\nnn` notation is used, except in the cases of `\a`, `\b`, `\f`, `\t`, `\n`, `\r` and `\v`. Additionally, double quotes and backslashes are escaped as `\"` and `\\`.
+
+
 ## Priority Lists
 
 Priority lists allow you to serialize out specific keys in a table first, and in a specific order. A *registry* table associates your tables with priority lists. The keys are your tables or metatables, with the former taking priority; the values are priority lists.
@@ -204,22 +225,6 @@ local pri_reg = {
 	[_my_metatable] = pri_list
 }
 ```
-
-
-## Chunks that are too big
-
-T2S2 can serialize tables that are too big for Lua to read back:
-
-  * Too many nested tables will lead to an error message along the lines of `chunk has too many syntax levels` or `C stack overflow`.
-
-  * Lua 5.1 has a limit of about 262143 table constants in a function. (Error: `constant table overflow`.) This limit is greatly relaxed in Lua 5.2+ and LuaJIT; they can both read arrays with at least five million entries.
-
-
-## Formatting
-
-Numbers are serialized with `string.format("%.17g", n)`, so they could lose some precision if they are extremely large or have fractional parts.
-
-Arrays and hash tables get are formatted differently. When an array is associated with a priority list that has at least one entry, T2S2 will always treat it like a hash table, even if none of the priority keys are present in the array. If the associated priority list is empty, then it is disregarded.
 
 
 ## Sorting

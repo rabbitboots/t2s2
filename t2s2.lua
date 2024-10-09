@@ -1,7 +1,7 @@
 -- t2s2: A Lua table serializer.
 -- See README.md and LICENSE for more info.
 -- Uses code from Serpent by Paul Kulchenko: https://github.com/pkulchenko/serpent
--- Version: 1.0.0
+-- Version: 1.0.1
 
 
 --[[
@@ -144,6 +144,10 @@ local _special_numbers = {
 }
 local _type_priority = {boolean=1, number=2, string=3, table=4}
 local _bool_priority = {[false]=1, [true]=2}
+local _esc_common = {
+	["\a"] = "\\a", ["\b"] = "\\b", ["\t"] = "\\t", ["\n"] = "\\n", ["\f"] = "\\f",
+	["\v"] = "\\v", ["\r"] = "\\r", ["\""] = "\\\"", ["\\"] = "\\\\"
+}
 
 
 local function _indent(n)
@@ -163,14 +167,23 @@ local function _formatNumber(number)
 end
 
 
-local function _formatStringSafe(s)
-	-- format string for later safe reading
-	s = string.format("%q", s)
-	-- escape newlines
-	s = s:gsub("\010", "n")
-	-- escape EOF
-	s = s:gsub("\026", "\\026")
+local function _hof_repl(s)
+	if _esc_common[s] then
+		return _esc_common[s]
+	else
+		local b = s:byte()
+		if b < 32 or b > 126 then
+			return "\\" .. string.format("%03u", b)
+		end
+	end
+end
 
+
+local function _formatStringDisplay(s)
+	--s = string.format("%q", s)
+	--if _VERSION == "Lua 5.1" and not rawget(_G, "jit") then
+		s = '"' .. s:gsub("[%z\001-\031\034\092\127]", _hof_repl) .. '"'
+	--end
 	return s
 end
 
@@ -226,7 +239,7 @@ function _mt_out:writeHashKey(key)
 		then
 			self:append(key)
 		else
-			self:append("[" .. _formatStringSafe(key) .. "]")
+			self:append("[" .. _formatStringDisplay(key) .. "]")
 		end
 
 	elseif type(key) == "number" then
@@ -314,7 +327,7 @@ end
 
 function _mt_out:writeValue(value)
 	if type(value) == "string" then
-		self:append(_formatStringSafe(value))
+		self:append(_formatStringDisplay(value))
 
 	elseif type(value) == "number" then
 		self:append(_formatNumber(value))
