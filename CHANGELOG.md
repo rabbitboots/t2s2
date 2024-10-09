@@ -4,7 +4,7 @@
 
 # 1.0.1 (2024-10-08)
 
-* Changed how `t2s2.serialize()` escapes characters in strings. All non-display ASCII characters are escaped, and the `%q` format specifier has been replaced by a call to `string.gsub()` with the intention of making the escape behavior consistent across Lua versions (PUC-Lua 5.1 doesn't escape certain chars that 5.2+ and JIT do).
+* Changed how `t2s2.serialize()` escapes characters in strings. All non-display ASCII characters are escaped, and the `%q` format specifier has been replaced by a call to `string.gsub()` with the intention of making the escape behavior consistent across Lua versions (`%q` behaves differently in PUC-Lua 5.1 versus 5.2+ and JIT).
 
 * Added to README notes and rearranged some sections.
 
