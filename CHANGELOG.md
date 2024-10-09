@@ -2,6 +2,11 @@
 
 (Date format: `YYYY-MM-DD`)
 
+# 1.0.2 (2024-10-09)
+
+* Minor cleanup of `t2s2.lua` internals and the README.
+
+
 # 1.0.1 (2024-10-08)
 
 * Changed how `t2s2.serialize()` escapes characters in strings. All non-display ASCII characters are escaped, and the `%q` format specifier has been replaced by a call to `string.gsub()` with the intention of making the escape behavior consistent across Lua versions (`%q` behaves differently in PUC-Lua 5.1 versus 5.2+ and JIT).

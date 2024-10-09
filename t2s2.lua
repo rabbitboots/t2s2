@@ -180,11 +180,7 @@ end
 
 
 local function _formatStringDisplay(s)
-	--s = string.format("%q", s)
-	--if _VERSION == "Lua 5.1" and not rawget(_G, "jit") then
-		s = '"' .. s:gsub("[%z\001-\031\034\092\127]", _hof_repl) .. '"'
-	--end
-	return s
+	return '"' .. s:gsub("[%z\001-\031\034\092\127]", _hof_repl) .. '"'
 end
 
 
@@ -363,11 +359,9 @@ function _mt_out:writeValue(value)
 end
 
 
-function M.serialize(t, pri_reg, first, last)
+function M.serialize(t, pri_reg)
 	_argType(1, t, "table")
 	_argEval(2, pri_reg, "table")
-	_argEval(3, first, "string")
-	_argEval(4, last, "string")
 
 	_updateRadixMark()
 
@@ -395,28 +389,27 @@ local _i
 local function _whitespace(s) _i = s:match("^%s+()", _i) or _i end
 local function _comment2(s) local _i2, _ = _i; _, _i = s:match("^%-%-%[(=*)%[.-%]%1]()", _i); _i = _i or _i2 end
 local function _comment1(s) _i = s:match("^%-%-[^\n]*()", _i) or _i end
-local function _skipWS(s, p)
-	_i = p
+local function _skipWS(s)
 	while true do
 		local _i2 = _i
-		_whitespace(s, _i)
-		_comment2(s, _i)
-		_comment1(s, _i)
+		_whitespace(s)
+		_comment2(s)
+		_comment1(s)
 		if _i == _i2 then
 			break
 		end
 	end
-	return _i
 end
 
 
 local function _isLoneTable(s)
-	local i = _skipWS(s, 1)
-	if s:find("^return", i) then
-		i = i + #"return"
-		i = _skipWS(s, i)
+	_i = 1
+	_skipWS(s)
+	if s:find("^return", _i) then
+		_i = _i + #"return"
+		_skipWS(s)
 	end
-	if s:find("^{", i) then
+	if s:find("^{", _i) then
 		return true
 	end
 end
