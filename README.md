@@ -1,4 +1,4 @@
-**Version:** 1.0.2
+**Version:** 1.0.3
 
 # T2S2
 
@@ -45,13 +45,14 @@ return {
 
 `t2s2.lua` is the main file.
 
+`t2s2_load.lua` contains the safe loader function.
+
 Files beginning with `pile` contain Lua boilerplate code, and are required.
 
 Files and folders beginning with `test` or `example` can be deleted.
 
 
-# T2S2 API
-
+# API: t2s2.lua
 
 ## t2s2.getFormatting
 
@@ -174,11 +175,13 @@ Converts a Lua table to a string.
 **Returns:** The serialized string.
 
 
-## t2s2.deserialize
+# API: t2s2_load.lua
+
+## t2s2Load.deserialize
 
 Loads a Lua string table constructor while temporarily disabling function calls, string methods, bytecode chunks, and any statements appearing before `return {…`.
 
-`local tbl = t2s2.deserialize(s)`
+`local tbl = t2s2Load.deserialize(s)`
 
 * `s`: The string to load.
 

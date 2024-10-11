@@ -3,6 +3,7 @@
 
 local inspect = require("test.inspect")
 local t2s2 = require("t2s2")
+local t2s2Load = require("t2s2_load")
 
 
 -- The table to serialize.
@@ -40,7 +41,7 @@ return {
 
 
 print("\nCompare with the reloaded table:\n")
-local ok, reloaded = assert(t2s2.deserialize(str))
+local ok, reloaded = assert(t2s2Load.deserialize(str))
 
 print(inspect(reloaded))
 

@@ -2,6 +2,11 @@
 
 (Date format: `YYYY-MM-DD`)
 
+# 1.0.3 (2024-10-11)
+
+* Moved the deserialization function to a separate file: `t2s2_load.lua`
+
+
 # 1.0.2 (2024-10-09)
 
 * Minor cleanup of `t2s2.lua` internals and the README.

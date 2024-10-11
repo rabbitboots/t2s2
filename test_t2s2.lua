@@ -13,6 +13,7 @@ require(PATH .. "test.strict")
 local errTest = require(PATH .. "test.err_test")
 local inspect = require(PATH .. "test.inspect")
 local t2s2 = require(PATH .. "t2s2")
+local t2s2Load = require(PATH .. "t2s2_load")
 
 
 local hex = string.char
@@ -295,7 +296,7 @@ self:registerJob("serialize()", function(self)
 		}
 		local str = t2s2.serialize(tbl)
 		self:print(3, str)
-		local ok, t2 = assert(t2s2.deserialize(str))
+		local ok, t2 = assert(t2s2Load.deserialize(str))
 		self:isEqual(t2[1][1][1][1][1][1], "Good morning")
 		self:isEqual(t2[1][1][1][1][1][2][1], "Hello")
 		self:isEqual(t2[1][1][1][1][1][3], "Good night")
@@ -312,7 +313,7 @@ self:registerJob("serialize()", function(self)
 		local tbl = {{"a"}, {"b"}, {"c"}}
 		local str = t2s2.serialize(tbl)
 		self:print(3, str)
-		local ok, t2 = assert(t2s2.deserialize(str))
+		local ok, t2 = assert(t2s2Load.deserialize(str))
 		self:isEqual(t2[1][1], "a")
 		self:isEqual(t2[2][1], "b")
 		self:isEqual(t2[3][1], "c")
@@ -356,7 +357,7 @@ self:registerJob("serialize()", function(self)
 
 		self:print(3, str)
 
-		local ok, t2 = assert(t2s2.deserialize(str))
+		local ok, t2 = assert(t2s2Load.deserialize(str))
 
 		-- We can't write {föo="bar"} here directly, because PUC-Lua's lexer will reject it.
 		-- This line proves that LuaJIT read the deserialized table constructor correctly,
@@ -557,7 +558,7 @@ end
 --]===]
 
 -- [===[
-self:registerFunction("t2s2.deserialize()", t2s2.deserialize)
+self:registerFunction("t2s2Load.deserialize()", t2s2Load.deserialize)
 self:registerJob("deserialize()", function(self)
 
 	_resetT2S2()
@@ -565,7 +566,7 @@ self:registerJob("deserialize()", function(self)
 	-- [====[
 	do
 		_resetT2S2()
-		local ok, val = self:expectLuaReturn("t2s2.deserialize() minimal table", t2s2.deserialize, "return {}")
+		local ok, val = self:expectLuaReturn("t2s2Load.deserialize() minimal table", t2s2Load.deserialize, "return {}")
 		self:print(4, ok, val)
 		self:isEvalTrue(ok)
 		self:isType(val, "table")
@@ -585,7 +586,7 @@ self:registerJob("deserialize()", function(self)
 		chunks when it searches for the substring 'return'.
 		--]]
 		local bin = string.dump(function() return {foo="bar"} end)
-		local ok, val = t2s2.deserialize(bin)
+		local ok, val = t2s2Load.deserialize(bin)
 		self:isEvalFalse(ok)
 		self:print(3, val)
 	end
@@ -595,7 +596,7 @@ self:registerJob("deserialize()", function(self)
 	-- [====[
 	do
 		self:print(4, "[-] prohibits function calls")
-		local ok, val = t2s2.deserialize("return {string.char(33)}")
+		local ok, val = t2s2Load.deserialize("return {string.char(33)}")
 		self:isEvalFalse(ok)
 		self:print(3, val)
 	end
@@ -605,7 +606,7 @@ self:registerJob("deserialize()", function(self)
 	-- [====[
 	do
 		self:print(4, "[-] prohibits string methods")
-		local ok, val = t2s2.deserialize("return {('a'):match('a')}")
+		local ok, val = t2s2Load.deserialize("return {('a'):match('a')}")
 		self:isEvalFalse(ok)
 		self:print(3, val)
 	end
@@ -615,7 +616,7 @@ self:registerJob("deserialize()", function(self)
 	-- [====[
 	do
 		self:print(4, "[-] prohibits statements before returned table constructor")
-		local ok, val = t2s2.deserialize("while true do end return {}")
+		local ok, val = t2s2Load.deserialize("while true do end return {}")
 		self:isEvalFalse(ok)
 		self:print(3, val)
 	end
@@ -625,7 +626,7 @@ self:registerJob("deserialize()", function(self)
 	-- [====[
 	do
 		self:print(4, "[+] ignores whitespace and comments before returned table constructor")
-		local ok, val = t2s2.deserialize("--\n--\n--[[foo]] \t --\n\n --[=[as\n\n\ndf]=]return {}")
+		local ok, val = t2s2Load.deserialize("--\n--\n--[[foo]] \t --\n\n --[=[as\n\n\ndf]=]return {}")
 		self:print(3, ok, val)
 		self:isEvalTrue(ok)
 		self:isType(val, "table")
@@ -701,7 +702,7 @@ self:registerJob("Pseudorandom table test", function(self)
 		self:print(3, inspect(root))
 
 		local tbl_str = t2s2.serialize(root)
-		local ok, t2 = assert(t2s2.deserialize(tbl_str))
+		local ok, t2 = assert(t2s2Load.deserialize(tbl_str))
 
 		-- Compare table contents
 		local function deepTableCompare(a, b, _depth)
